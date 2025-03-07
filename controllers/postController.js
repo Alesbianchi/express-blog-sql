@@ -49,17 +49,16 @@ function destroy(req, res) {
 
     // recuperiamo l'id dall' URL e trasformiamolo in numero
     const id = parseInt(req.params.id)
-    // cerchiamo il post tramite id
-    const post = posts.find(post => post.id === id);
-    // cancello la pizza trovata
-    posts.splice(posts.indexOf(post), 1);
+    connection.query('DELETE FROM posts WHERE id = ?', [id], (err) => {
 
-    // log di riscontro di check su aggiornamento dati
-    console.log(posts);
+        if (err) return res.status(500).json({ error: 'Failed to delete post' });
 
-    // ritorno la risposta positiva di avvenuta cancellazione
-    res.sendStatus(204);
+        res.sendStatus(204)
+
+    });
+
 }
+
 
 
 function update(req, res) {
