@@ -37,7 +37,24 @@ function show(req, res) {
         //permetto di restituire una risposta anche in caso di ricerca negativa
         if (results.length === 0) return res.status(404).json({ error: 'post not found' });
 
-        res.json(results[0]);
+        const post = results[0];
+
+        const tagsSql = `
+	
+            SELECT tags.* 
+            FROM tags
+            JOIN post_tag ON post_tag.tag_id = tags.id
+            WHERE post_tag.post_id = ?;
+        
+        `;
+        // Se è andata bene, eseguiamo la seconda query per i tags 
+        connection.query(tagsSql, [id], (err, tagsResults) => {
+            if (err) return res.status(500).json({ error: 'Database query failed' });
+
+            // Aggoiungiamo i tags ai posts 
+            post.tags = tagsResults;
+            res.json(post);
+        });
 
     });
 
