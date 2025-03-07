@@ -1,22 +1,24 @@
 // importo idati
-const posts = require('../data/posts');
+// const posts = require('../data/posts');
+
+// importo il database
+const connection = require('../data/db');
 
 
 function index(req, res) {
-    //res.send('Lista dei blog');
-    //Inizialmente, il blog filtrato corrisponde a quello originale
-    let filteredPost = posts;
+    const sql = 'SELECT * FROM posts';
 
-    // Se la richiesta contiene un filtro, allora filtriamo il blog
-    if (req.query.ingredient) {
-        filteredPost = post.filter(
-            post => post.list.includes(req.query.list)
-        );
-    }
 
-    // restituiamo la variabile filteredPost
-    // potrebbe essere stata filtrata o contenere il blog originale
-    res.json(filteredPost);
+
+    // eseguiamo la query!
+
+    connection.query(sql, (err, results) => {
+
+        if (err) return res.status(500).json({ error: 'Database query failed' });
+
+        res.json(results);
+
+    });
 
 }
 
